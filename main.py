@@ -1,10 +1,15 @@
 import speedtest
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-# import pandas as pd
-# import gspread_dataframe as gd
+import os
+import re
+from datetime import datetime
+
 
 def main():
+    print('SERVICE START AT ' + datetime.now().isoformat())
+    file_path = re.match(r'(/.+/)', os.path.abspath(__file__)).group(0)
+
     s = speedtest.Speedtest()
     s.get_best_server()
     s.download()
@@ -15,16 +20,9 @@ def main():
             s.results.ping, s.results.server['latency'], s.results.server['sponsor'],
             s.results.server['id'], s.results.server['host']]
 
-    # # Connecting with `gspread` here
-    #
-    # ws = gc.open("SheetName").worksheet("xyz")
-    # existing = gd.get_as_dataframe(ws)
-    # updated = existing.append(your_new_data)
-    # gd.set_with_dataframe(ws, updated)
-
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('conntest-cred.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name((file_path + 'conntest-cred.json'), scope)
     client = gspread.authorize(creds)
 
     sheet = client.open('conntest_results').sheet1
