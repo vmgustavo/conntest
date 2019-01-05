@@ -4,10 +4,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import re
 from datetime import datetime
+import pytz
 
 
 def main():
-    print('SERVICE START AT ' + datetime.now().isoformat())
+    timestamp = datetime.now(tz=pytz.timezone('America/Sao_Paulo')).isoformat()
+    print('SERVICE START AT ' + timestamp)
     file_path = re.match(r'(/.+/)', os.path.abspath(__file__)).group(0)
 
     s = speedtest.Speedtest()
@@ -16,7 +18,7 @@ def main():
     s.upload()
 
     # ['timestamp', 'download', 'upload', 'ping', 'latency', 'sponsor', 'id', 'host']
-    data = [s.results.timestamp, s.results.download, s.results.upload,
+    data = [timestamp, s.results.download, s.results.upload,
             s.results.ping, s.results.server['latency'], s.results.server['sponsor'],
             s.results.server['id'], s.results.server['host']]
 
