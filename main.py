@@ -1,9 +1,16 @@
+import logging
 from datetime import datetime
 
 import pytz
 import gspread
 import speedtest
 from oauth2client.service_account import ServiceAccountCredentials
+
+import LoggerClass
+
+LoggerClass.Logger()
+logger = logging.getLogger(__name__)
+logger.info(f'_____ START EXECUTION {__file__}')
 
 MEGA_BYTES = 2 ** 20
 MEGA_BITS = 10 ** 6
@@ -12,7 +19,7 @@ MEGA_BITS = 10 ** 6
 def main():
     # SPEEDTEST PART
     timestamp = datetime.now(tz=pytz.timezone('America/Sao_Paulo')).isoformat()
-    print('SERVICE START AT ' + timestamp)
+    logger.info('SERVICE START AT ' + timestamp)
 
     s = speedtest.Speedtest(
         config={
@@ -50,6 +57,12 @@ def main():
         'server_latency': res['server']['latency'],
         'client_ip': res['client']['ip']
     }
+
+    logger.info(' | '.join([
+        f'DOWN: {data["download"]:.02f}',
+        f'UP: {data["upload"]:.02f}',
+        f'PING: {data["ping"]:.02f}'
+    ]))
 
     # GOOGLE DRIVE API PART
     scope = ['https://spreadsheets.google.com/feeds',
